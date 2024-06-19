@@ -1,0 +1,618 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.kolich</groupId>
+    <artifactId>beacon</artifactId>
+    <version>0.1</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.java-source.version>11</project.java-source.version>
+        <project.java-runtime.version>[11,)</project.java-runtime.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.maven.version>3.6.3</project.maven.version>
+
+        <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
+        <maven-buildnumber-plugin.version>1.4</maven-buildnumber-plugin.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.1.0</maven-surefire-plugin.version>
+        <maven-checkstyle-plugin.version>3.3.0</maven-checkstyle-plugin.version>
+        <maven-pmd-plugin.version>3.21.2</maven-pmd-plugin.version>
+        <maven-pmd-plugin.pmd.version>6.55.0</maven-pmd-plugin.pmd.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-dependency-plugin.version>3.5.0</maven-dependency-plugin.version>
+        <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
+        <maven-duplicate-finder-plugin.version>1.4.0</maven-duplicate-finder-plugin.version>
+
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.5.6</logback.version>
+
+        <curacao.version>7.0.0</curacao.version>
+
+        <kolich-common.version>0.5</kolich-common.version>
+
+        <jetty.version>9.4.54.v20240208</jetty.version>
+
+        <typesafe-config.version>1.4.3</typesafe-config.version>
+
+        <jackson.version>2.17.2</jackson.version>
+
+        <commons-lang3.version>3.15.0</commons-lang3.version>
+        <commons-text.version>1.12.0</commons-text.version>
+        <commons-io.version>2.16.1</commons-io.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+
+        <aws-sdk.version>1.12.700</aws-sdk.version>
+
+        <guava.version>33.2.1-jre</guava.version>
+
+        <quartz.version>2.3.2</quartz.version>
+
+        <freemarker.version>2.3.33</freemarker.version>
+
+        <htmlcompressor.version>1.5.2</htmlcompressor.version>
+        <yuicompressor.version>2.4.8</yuicompressor.version>
+
+        <bcprov-ext-jdk15on.version>1.70</bcprov-ext-jdk15on.version>
+        <jbcrypt.version>0.4</jbcrypt.version>
+
+        <async-http-client.version>2.12.3</async-http-client.version>
+
+        <picocli.version>4.7.6</picocli.version>
+
+        <checkstyle.version>10.17.0</checkstyle.version>
+
+        <!-- Test dependency versions -->
+
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <mockito-core.version>5.12.0</mockito-core.version>
+    </properties>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/markkolich/beacon/issues</url>
+    </issueManagement>
+    <scm>
+        <connection>scm:git:https://github.com/markkolich/beacon.git</connection>
+        <developerConnection>scm:git:https://github.com/markkolich/beacon.git</developerConnection>
+        <url>https://github.com/markkolich/beacon</url>
+    </scm>
+    <developers>
+        <developer>
+            <id>markkolich</id>
+            <name>Mark Kolich</name>
+            <email>social@kolich.com</email>
+        </developer>
+    </developers>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>curacao</groupId>
+            <artifactId>curacao</artifactId>
+            <version>${curacao.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>curacao</groupId>
+            <artifactId>curacao-servlet-javax</artifactId>
+            <version>${curacao.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>curacao</groupId>
+            <artifactId>curacao-jackson</artifactId>
+            <version>${curacao.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kolich</groupId>
+            <artifactId>kolich-common</artifactId>
+            <version>${kolich-common.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-webapp</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>config</artifactId>
+            <version>${typesafe-config.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>${commons-text.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-sdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-route53</artifactId>
+            <version>${aws-sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+            <exclusions>
+                <!-- WTF is up with the 'c3p0' and 'HikariCP' dependencies in the compile scope? -->
+                <!-- https://github.com/quartz-scheduler/quartz/issues/306 -->
+                <exclusion>
+                    <groupId>com.mchange</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.zaxxer</groupId>
+                    <artifactId>HikariCP-java7</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${freemarker.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.htmlcompressor</groupId>
+            <artifactId>htmlcompressor</artifactId>
+            <version>${htmlcompressor.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yahoo.platform.yui</groupId>
+            <artifactId>yuicompressor</artifactId>
+            <version>${yuicompressor.version}</version>
+            <exclusions>
+                <!-- https://github.com/yui/yuicompressor/issues/173 -->
+                <exclusion>
+                    <groupId>rhino</groupId>
+                    <artifactId>js</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-ext-jdk15on</artifactId>
+            <version>${bcprov-ext-jdk15on.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.asynchttpclient</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>${async-http-client.version}</version>
+            <exclusions>
+                <!-- https://github.com/AsyncHttpClient/async-http-client/issues/1541 -->
+                <!-- https://github.com/AsyncHttpClient/async-http-client/issues/1589 -->
+                <exclusion>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>${picocli.version}</version>
+        </dependency>
+
+        <!-- ###################### -->
+        <!--   Test dependencies    -->
+        <!-- ###################### -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${maven-clean-plugin.version}</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>dist</directory>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                        <arg>-Xlint:-processing</arg>
+                        <arg>-Xlint:-serial</arg>
+                        <arg>-Xlint:-try</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <!-- Keeps the Surefire "ForkedBooter" from popping up in the macOS dock. -->
+                        <java.awt.headless>true</java.awt.headless>
+                        <!-- Forces unit tests to run in the context of a known timezone: PST/PDT. -->
+                        <user.timezone>America/Los_Angeles</user.timezone>
+                    </systemPropertyVariables>
+                    <argLine>--add-exports java.xml/jdk.xml.internal=ALL-UNNAMED</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${maven-buildnumber-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>create-buildnumber</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <doCheck>false</doCheck>
+                            <doUpdate>false</doUpdate>
+                            <!-- 7-characters to match Git's default "abbreviated commit hash" length. -->
+                            <shortRevisionLength>7</shortRevisionLength>
+                            <!-- An ISO-8601 compliant timestamp string. -->
+                            <timestampFormat>{0,date,yyyy-MM-dd'T'HH:mm:ssXXX}</timestampFormat>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>verify-style</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <configLocation>build/checkstyle/config.xml</configLocation>
+                    <violationSeverity>warning</violationSeverity>
+                    <failOnViolation>true</failOnViolation>
+                    <failsOnError>true</failsOnError>
+                    <!-- Validate source files in src/test/java too -->
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <!--consoleOutput>true</consoleOutput-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-core</artifactId>
+                        <version>${maven-pmd-plugin.pmd.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sourceforge.pmd</groupId>
+                        <artifactId>pmd-java</artifactId>
+                        <version>${maven-pmd-plugin.pmd.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>pmd-check</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <printFailingErrors>true</printFailingErrors>
+                    <includeTests>true</includeTests>
+                    <failOnViolation>true</failOnViolation>
+                    <linkXRef>false</linkXRef>
+                    <sourceEncoding>utf-8</sourceEncoding>
+                    <targetJdk>${project.java-source.version}</targetJdk>
+                    <rulesets>
+                        <ruleset>build/pmd/ruleset.xml</ruleset>
+                    </rulesets>
+                    <excludeRoots>
+                        <excludeRoot>target/generated-sources</excludeRoot>
+                    </excludeRoots>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.basepom.maven</groupId>
+                <artifactId>duplicate-finder-maven-plugin</artifactId>
+                <version>${maven-duplicate-finder-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>duplicate-check</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failBuildInCaseOfDifferentContentConflict>true</failBuildInCaseOfDifferentContentConflict>
+                    <failBuildInCaseOfEqualContentConflict>true</failBuildInCaseOfEqualContentConflict>
+                    <failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+                    <ignoredResourcePatterns>
+                        <!-- Jetty loves their about.html pages -->
+                        <ignoredResourcePattern>.*about\.html$</ignoredResourcePattern>
+                    </ignoredResourcePatterns>
+                    <ignoredClassPatterns>
+                        <!--
+                                Found duplicate and different classes in
+                                [com.googlecode.htmlcompressor:htmlcompressor:1.5.2,
+                                com.yahoo.platform.yui:yuicompressor:2.4.8]
+                            -->
+                        <ignoredClassPattern>jargs\.gnu\.CmdLineParser</ignoredClassPattern>
+                        <!-- Jigsaw project (Java 9) and later module-info classes. -->
+                        <ignoredClassPattern>.*\.module-info$</ignoredClassPattern>
+                    </ignoredClassPatterns>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes/webapp</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/webapp</directory>
+                                    <includes>
+                                        <include>static/img/**</include>
+                                        <include>static/release/**</include>
+                                        <include>static/webfonts/**</include>
+
+                                        <include>templates/**</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven-shade-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.kolich.beacon.Application</mainClass>
+                                </transformer>
+                            </transformers>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>runnable</shadedClassifierName>
+                            <outputDirectory>dist</outputDirectory>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Copies the resulting JAR from into the dist/ directory. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-artifact</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>${project.packaging}</type>
+                                </artifactItem>
+                            </artifactItems>
+                            <outputDirectory>dist</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!--
+                    Filtering must be set to 'true' here to support the 'buildnumber-maven-plugin'
+                    injecting the build number into the resulting properties file resource.
+                -->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+    </build>
+
+    <repositories>
+        <repository>
+            <id>markkolich.github.io</id>
+            <name>markkolich.github.io</name>
+            <url>https://markkolich.github.io/repo</url>
+            <releases />
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>

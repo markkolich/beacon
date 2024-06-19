@@ -1,0 +1,20 @@
+*.class
+
+# Package Files #
+*.war
+*.ear
+*.jar
+
+.project
+.classpath
+.cache
+.idea
+target
+bin
+dist
+lib_managed
+release
+*.iml
+*.ipr
+*.iws
+.DS_Store
