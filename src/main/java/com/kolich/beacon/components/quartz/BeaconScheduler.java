@@ -28,6 +28,8 @@ package com.kolich.beacon.components.quartz;
 
 import com.kolich.beacon.components.aws.AwsConfig;
 import com.kolich.beacon.components.aws.route53.Route53Client;
+import com.kolich.beacon.components.nextdns.BeaconNextDnsConfig;
+import com.kolich.beacon.components.nextdns.NextDnsClient;
 import com.kolich.beacon.components.unifi.BeaconUdmConfig;
 import com.kolich.beacon.components.unifi.UdmClient;
 import curacao.annotations.Component;
@@ -40,6 +42,8 @@ import org.quartz.Trigger;
 
 import static com.kolich.beacon.components.quartz.BeaconJob.BEACON_AWS_CONFIG_DATA_MAP_KEY;
 import static com.kolich.beacon.components.quartz.BeaconJob.BEACON_AWS_ROUTE53_CLIENT_DATA_MAP_KEY;
+import static com.kolich.beacon.components.quartz.BeaconJob.BEACON_NEXT_DNS_CLIENT_DATA_MAP_KEY;
+import static com.kolich.beacon.components.quartz.BeaconJob.BEACON_NEXT_DNS_CONFIG_DATA_MAP_KEY;
 import static com.kolich.beacon.components.quartz.BeaconJob.BEACON_UDM_CLIENT_DATA_MAP_KEY;
 import static com.kolich.beacon.components.quartz.BeaconJob.BEACON_UDM_CONFIG_DATA_MAP_KEY;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -58,7 +62,9 @@ public final class BeaconScheduler implements CuracaoComponent {
             final BeaconSchedulerFactory beaconSchedulerFactory,
             final UdmClient udmClient,
             final AwsConfig awsConfig,
-            final Route53Client route53Client) throws Exception {
+            final Route53Client route53Client,
+            final BeaconNextDnsConfig beaconNextDnsConfig,
+            final NextDnsClient nextDnsClient) throws Exception {
         quartzScheduler_ = beaconSchedulerFactory.getNewScheduler();
 
         final JobDataMap jobDataMap = new JobDataMap();
@@ -66,6 +72,8 @@ public final class BeaconScheduler implements CuracaoComponent {
         jobDataMap.put(BEACON_UDM_CLIENT_DATA_MAP_KEY, udmClient);
         jobDataMap.put(BEACON_AWS_CONFIG_DATA_MAP_KEY, awsConfig);
         jobDataMap.put(BEACON_AWS_ROUTE53_CLIENT_DATA_MAP_KEY, route53Client.getRoute53Client());
+        jobDataMap.put(BEACON_NEXT_DNS_CONFIG_DATA_MAP_KEY, beaconNextDnsConfig);
+        jobDataMap.put(BEACON_NEXT_DNS_CLIENT_DATA_MAP_KEY, nextDnsClient);
 
         final JobDetail job = newJob(BeaconJob.class)
                 .setJobData(jobDataMap)

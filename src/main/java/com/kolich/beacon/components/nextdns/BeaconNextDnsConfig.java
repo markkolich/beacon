@@ -24,46 +24,47 @@
  * OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.kolich.beacon.components.quartz;
+package com.kolich.beacon.components.nextdns;
 
 import com.kolich.beacon.components.BeaconConfig;
 import com.typesafe.config.Config;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
 
+import java.util.concurrent.TimeUnit;
+
 @Component
-public final class BeaconQuartzConfig {
+public final class BeaconNextDnsConfig {
 
-    private static final String QUARTZ_CONFIG_PATH = "quartz";
+    private static final String NEXT_DNS_CONFIG_PATH = "next-dns";
 
-    private static final String THREAD_POOL_SIZE_PROP = "thread-pool.size";
-    private static final String THREAD_POOL_USE_DAEMONS_PROP = "thread-pool.use-daemons";
-
-    private static final String CRON_EXPRESSION_PROP = "cron-expression";
+    private static final String UPDATE_LINKED_IP_ENABLED_PROP = "update-linked-ip-enabled";
+    private static final String API_LINKED_IP_URL_PROP = "api-linked-ip-url";
+    private static final String API_CLIENT_TIMEOUT_PROP = "api-client-timeout";
 
     private final Config config_;
 
     @Injectable
-    public BeaconQuartzConfig(
+    public BeaconNextDnsConfig(
             final BeaconConfig beaconConfig) {
-        config_ = beaconConfig.getBeaconConfig()
-                .getConfig(QUARTZ_CONFIG_PATH);
+        config_ = beaconConfig.getBeaconConfig().getConfig(NEXT_DNS_CONFIG_PATH);
     }
 
-    public Config getQuartzConfig() {
+    public Config getNextDnsConfig() {
         return config_;
     }
 
-    public int getThreadPoolSize() {
-        return config_.getInt(THREAD_POOL_SIZE_PROP);
+    public boolean isUpdateLinkedIpEnabled() {
+        return config_.getBoolean(UPDATE_LINKED_IP_ENABLED_PROP);
     }
 
-    public boolean getThreadPoolUseDaemons() {
-        return config_.getBoolean(THREAD_POOL_USE_DAEMONS_PROP);
+    public String getApiLinkedIpUrl() {
+        return config_.getString(API_LINKED_IP_URL_PROP);
     }
 
-    public String getCronExpression() {
-        return config_.getString(CRON_EXPRESSION_PROP);
+    public long getApiClientTimeout(
+            final TimeUnit timeUnit) {
+        return config_.getDuration(API_CLIENT_TIMEOUT_PROP, timeUnit);
     }
 
 }

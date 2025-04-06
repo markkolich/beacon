@@ -29,6 +29,8 @@ package com.kolich.beacon.components.quartz;
 import com.amazonaws.services.route53.AmazonRoute53;
 import com.amazonaws.services.route53.model.*;
 import com.kolich.beacon.components.aws.AwsConfig;
+import com.kolich.beacon.components.nextdns.BeaconNextDnsConfig;
+import com.kolich.beacon.components.nextdns.NextDnsClient;
 import com.kolich.beacon.components.unifi.BeaconUdmConfig;
 import com.kolich.beacon.components.unifi.UdmClient;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +52,8 @@ public final class BeaconJob implements Job {
     public static final String BEACON_UDM_CLIENT_DATA_MAP_KEY = "beacon.udmClient";
     public static final String BEACON_AWS_CONFIG_DATA_MAP_KEY = "beacon.awsConfig";
     public static final String BEACON_AWS_ROUTE53_CLIENT_DATA_MAP_KEY = "beacon.awsRoute53Client";
+    public static final String BEACON_NEXT_DNS_CONFIG_DATA_MAP_KEY = "beacon.nextDnsConfig";
+    public static final String BEACON_NEXT_DNS_CLIENT_DATA_MAP_KEY = "beacon.nextDnsClient";
 
     @Override
     public void execute(
@@ -64,6 +68,10 @@ public final class BeaconJob implements Job {
                 (AwsConfig) jobDataMap.get(BEACON_AWS_CONFIG_DATA_MAP_KEY);
         final AmazonRoute53 route53 =
                 (AmazonRoute53) jobDataMap.get(BEACON_AWS_ROUTE53_CLIENT_DATA_MAP_KEY);
+        final BeaconNextDnsConfig beaconNextDnsConfig =
+                (BeaconNextDnsConfig) jobDataMap.get(BEACON_NEXT_DNS_CONFIG_DATA_MAP_KEY);
+        final NextDnsClient nextDnsClient =
+                (NextDnsClient) jobDataMap.get(BEACON_NEXT_DNS_CLIENT_DATA_MAP_KEY);
 
         try {
             final String jwtAuthToken = udmClient.getJwtAuthToken(
@@ -125,6 +133,11 @@ public final class BeaconJob implements Job {
                     route53.changeResourceRecordSets(crrsRequest);
             LOG.debug("Successfully updated Route53 DNS with UDM uplink IP: {}: {}",
                     crrsResult.getChangeInfo().getId(), udmUplinkIp);
+
+            // Set new linked IP with NextDNS.
+            if (beaconNextDnsConfig.isUpdateLinkedIpEnabled()) {
+                nextDnsClient.setLinkedIp(udmUplinkIp);
+            }
         } catch (final Exception e) {
             LOG.error("Failed to run beacon job.", e);
         }
