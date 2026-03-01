@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -35,11 +35,9 @@ import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static jakarta.servlet.http.HttpServletResponse.SC_OK;
 
 public interface FreeMarkerContent {
-
-    String DATA_MAP_SESSION_ATTR = "session";
 
     String getTemplateName();
 

@@ -68,7 +68,7 @@ java -Dconfig.file=/path/to/your/beacon.conf -jar dist/beacon-0.1-runnable.jar
 
 ## Licensing
 
-Copyright (c) 2024 <a href="https://mark.koli.ch">Mark S. Kolich</a>.
+Copyright (c) 2026 <a href="https://mark.koli.ch">Mark S. Kolich</a>.
 
 All code in this project is freely available for use and redistribution under the <a href="http://opensource.org/comment/991">MIT License</a>.
 

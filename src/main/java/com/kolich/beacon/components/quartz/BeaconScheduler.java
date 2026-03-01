@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -27,7 +27,7 @@
 package com.kolich.beacon.components.quartz;
 
 import com.kolich.beacon.components.aws.AwsConfig;
-import com.kolich.beacon.components.aws.route53.Route53Client;
+import com.kolich.beacon.components.aws.route53.BeaconRoute53Client;
 import com.kolich.beacon.components.nextdns.BeaconNextDnsConfig;
 import com.kolich.beacon.components.nextdns.NextDnsClient;
 import com.kolich.beacon.components.unifi.BeaconUdmConfig;
@@ -62,7 +62,7 @@ public final class BeaconScheduler implements CuracaoComponent {
             final BeaconSchedulerFactory beaconSchedulerFactory,
             final UdmClient udmClient,
             final AwsConfig awsConfig,
-            final Route53Client route53Client,
+            final BeaconRoute53Client route53Client,
             final BeaconNextDnsConfig beaconNextDnsConfig,
             final NextDnsClient nextDnsClient) throws Exception {
         quartzScheduler_ = beaconSchedulerFactory.getNewScheduler();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -26,11 +26,11 @@
 
 package com.kolich.beacon.components.aws;
 
-import com.amazonaws.regions.Regions;
 import com.kolich.beacon.components.BeaconConfig;
 import com.typesafe.config.Config;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
+import software.amazon.awssdk.regions.Region;
 
 import java.util.concurrent.TimeUnit;
 
@@ -58,8 +58,8 @@ public final class BeaconTypesafeAwsConfig implements AwsConfig {
     // Route53 config
 
     @Override
-    public Regions getAwsRoute53Region() {
-        return Regions.fromName(config_.getString(AWS_ROUTE_53_REGION_PROP));
+    public Region getAwsRoute53Region() {
+        return Region.of(config_.getString(AWS_ROUTE_53_REGION_PROP));
     }
 
     @Override

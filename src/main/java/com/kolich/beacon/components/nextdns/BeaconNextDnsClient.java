@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -30,6 +30,7 @@ import com.kolich.beacon.BuildVersion;
 import com.kolich.beacon.exceptions.BeaconException;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
+import curacao.components.ComponentDestroyable;
 import curacao.core.servlet.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
 import org.asynchttpclient.*;
@@ -43,7 +44,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.asynchttpclient.Dsl.asyncHttpClient;
 
 @Component
-public final class BeaconNextDnsClient implements NextDnsClient {
+public final class BeaconNextDnsClient implements NextDnsClient, ComponentDestroyable {
 
     private static final Logger LOG = LoggerFactory.getLogger(BeaconNextDnsClient.class);
 
@@ -51,10 +52,21 @@ public final class BeaconNextDnsClient implements NextDnsClient {
 
     private final BeaconNextDnsConfig beaconNextDnsConfig_;
 
+    private final AsyncHttpClient asyncHttpClient_;
+
     @Injectable
     public BeaconNextDnsClient(
             final BeaconNextDnsConfig beaconNextDnsConfig) {
         beaconNextDnsConfig_ = beaconNextDnsConfig;
+
+        final BuildVersion buildVersion = BuildVersion.getInstance();
+        final String userAgent = String.format(USER_AGENT_FORMAT,
+                StringUtils.defaultIfBlank(buildVersion.getBuildNumber(), "Dev"));
+
+        final AsyncHttpClientConfig asyncHttpClientConfig = new DefaultAsyncHttpClientConfig.Builder()
+                .setUserAgent(userAgent)
+                .build();
+        asyncHttpClient_ = asyncHttpClient(asyncHttpClientConfig);
     }
 
     @Override
@@ -62,10 +74,10 @@ public final class BeaconNextDnsClient implements NextDnsClient {
             final String linkedIp) {
         checkNotNull(linkedIp, "Linked IP cannot be null.");
 
-        try (AsyncHttpClient asyncHttpClient = asyncHttpClient(buildAsyncHttpClientConfig())) {
+        try {
             final String linkedIpApiUrl = beaconNextDnsConfig_.getApiLinkedIpUrl();
 
-            final ListenableFuture<Response> futureResponse = asyncHttpClient.prepareGet(linkedIpApiUrl)
+            final ListenableFuture<Response> futureResponse = asyncHttpClient_.prepareGet(linkedIpApiUrl)
                     .execute();
 
             final long apiClientTimeoutInMs =
@@ -93,15 +105,9 @@ public final class BeaconNextDnsClient implements NextDnsClient {
         }
     }
 
-    private AsyncHttpClientConfig buildAsyncHttpClientConfig() throws Exception {
-        final BuildVersion buildVersion = BuildVersion.getInstance();
-
-        final String userAgent = String.format(USER_AGENT_FORMAT,
-                StringUtils.defaultIfBlank(buildVersion.getBuildNumber(), "Dev"));
-
-        return new DefaultAsyncHttpClientConfig.Builder()
-                .setUserAgent(userAgent)
-                .build();
+    @Override
+    public void destroy() throws Exception {
+        asyncHttpClient_.close();
     }
 
 }

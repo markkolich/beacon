@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -26,39 +26,38 @@
 
 package com.kolich.beacon.components.aws.route53;
 
-import com.amazonaws.services.route53.AmazonRoute53;
-import com.amazonaws.services.route53.AmazonRoute53ClientBuilder;
 import com.kolich.beacon.components.aws.AwsClientConfig;
 import com.kolich.beacon.components.aws.AwsConfig;
 import com.kolich.beacon.components.aws.AwsCredentials;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
 import curacao.components.ComponentDestroyable;
+import software.amazon.awssdk.services.route53.Route53Client;
 
 @Component
-public final class Route53Client implements ComponentDestroyable {
+public final class BeaconRoute53Client implements ComponentDestroyable {
 
-    private final AmazonRoute53 route53_;
+    private final Route53Client route53_;
 
     @Injectable
-    public Route53Client(
+    public BeaconRoute53Client(
             final AwsConfig awsConfig,
             final AwsCredentials awsCredentials,
             final AwsClientConfig awsClientConfig) {
-        route53_ = AmazonRoute53ClientBuilder.standard()
-                .withCredentials(awsCredentials.getCredentialsProvider())
-                .withClientConfiguration(awsClientConfig.getClientConfiguration())
-                .withRegion(awsConfig.getAwsRoute53Region())
+        route53_ = Route53Client.builder()
+                .credentialsProvider(awsCredentials.getCredentialsProvider())
+                .overrideConfiguration(awsClientConfig.getClientOverrideConfiguration())
+                .region(awsConfig.getAwsRoute53Region())
                 .build();
     }
 
-    public AmazonRoute53 getRoute53Client() {
+    public Route53Client getRoute53Client() {
         return route53_;
     }
 
     @Override
     public void destroy() throws Exception {
-        route53_.shutdown();
+        route53_.close();
     }
 
 }
