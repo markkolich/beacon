@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -26,7 +26,7 @@
 
 package com.kolich.beacon.components.aws;
 
-import com.amazonaws.regions.Regions;
+import software.amazon.awssdk.regions.Region;
 
 import java.util.concurrent.TimeUnit;
 
@@ -48,7 +48,7 @@ public interface AwsConfig {
 
     // Route53 config
 
-    Regions getAwsRoute53Region();
+    Region getAwsRoute53Region();
 
     String getAwsRoute53HostedZoneId();
 

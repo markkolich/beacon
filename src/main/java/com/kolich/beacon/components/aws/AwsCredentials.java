@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -26,33 +26,32 @@
 
 package com.kolich.beacon.components.aws;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 
 @Component
 public final class AwsCredentials {
 
-    private final AWSCredentials awsCredentials_;
-    private final AWSCredentialsProvider awsCredentialsProvider_;
+    private final AwsBasicCredentials awsCredentials_;
+    private final AwsCredentialsProvider awsCredentialsProvider_;
 
     @Injectable
     public AwsCredentials(
             final AwsConfig awsConfig) {
-        awsCredentials_ = new BasicAWSCredentials(
+        awsCredentials_ = AwsBasicCredentials.create(
                 awsConfig.getAwsAccessKey(),
                 awsConfig.getAwsSecretKey());
-        awsCredentialsProvider_ = new AWSStaticCredentialsProvider(awsCredentials_);
+        awsCredentialsProvider_ = StaticCredentialsProvider.create(awsCredentials_);
     }
 
-    public AWSCredentials getCredentials() {
+    public AwsBasicCredentials getCredentials() {
         return awsCredentials_;
     }
 
-    public AWSCredentialsProvider getCredentialsProvider() {
+    public AwsCredentialsProvider getCredentialsProvider() {
         return awsCredentialsProvider_;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Mark S. Kolich
+ * Copyright (c) 2026 Mark S. Kolich
  * https://mark.koli.ch
  *
  * Permission is hereby granted, free of charge, to any person
@@ -26,30 +26,32 @@
 
 package com.kolich.beacon.components.aws;
 
-import com.amazonaws.ClientConfiguration;
+import com.google.common.net.HttpHeaders;
 import com.kolich.beacon.BuildVersion;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
+import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 
 @Component
 public final class AwsClientConfig {
 
     private static final String USER_AGENT_PREFIX_FORMAT = "Beacon/%s";
 
-    private final ClientConfiguration clientConfiguration_;
+    private final ClientOverrideConfiguration clientOverrideConfiguration_;
 
     @Injectable
     public AwsClientConfig() {
         final BuildVersion buildVersion = BuildVersion.getInstance();
 
-        final String userAgentPrefix = String.format(USER_AGENT_PREFIX_FORMAT,
+        final String userAgentSuffix = String.format(USER_AGENT_PREFIX_FORMAT,
                 buildVersion.getBuildNumber());
-        clientConfiguration_ = new ClientConfiguration()
-                .withUserAgentPrefix(userAgentPrefix);
+        clientOverrideConfiguration_ = ClientOverrideConfiguration.builder()
+                .putHeader(HttpHeaders.USER_AGENT, userAgentSuffix)
+                .build();
     }
 
-    public ClientConfiguration getClientConfiguration() {
-        return clientConfiguration_;
+    public ClientOverrideConfiguration getClientOverrideConfiguration() {
+        return clientOverrideConfiguration_;
     }
 
 }
