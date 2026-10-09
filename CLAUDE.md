@@ -8,6 +8,8 @@ Beacon is a Java 11 dynamic DNS updater that syncs a UniFi UDM's WAN uplink IP w
 
 ## Build & Run
 
+The build requires JDK 21+ but compiles with `--release 11`, so the resulting JAR runs on a Java 11+ runtime. The `maven-enforcer-plugin` fails the build on an older JDK, or if any runtime dependency ships bytecode newer than Java 11.
+
 ```bash
 # Build (compiles, runs tests, checkstyle, PMD, and produces fat JAR in dist/)
 mvn clean package
