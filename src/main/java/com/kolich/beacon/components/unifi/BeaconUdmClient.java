@@ -37,6 +37,7 @@ import com.kolich.beacon.entities.unifi.response.UdmDeviceStatResponse;
 import com.kolich.beacon.exceptions.BeaconException;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
+import curacao.components.ComponentDestroyable;
 import curacao.core.servlet.HttpStatus;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
@@ -62,7 +63,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.asynchttpclient.Dsl.asyncHttpClient;
 
 @Component
-public final class BeaconUdmClient implements UdmClient {
+public final class BeaconUdmClient implements UdmClient, ComponentDestroyable {
 
     private static final Logger LOG = LoggerFactory.getLogger(BeaconUdmClient.class);
 
@@ -81,12 +82,15 @@ public final class BeaconUdmClient implements UdmClient {
 
     private final ObjectMapper objectMapper_;
 
+    private final AsyncHttpClient asyncHttpClient_;
+
     @Injectable
     public BeaconUdmClient(
             final BeaconUdmConfig beaconUdmConfig,
-            final BeaconJacksonObjectMapper beaconJacksonObjectMapper) {
+            final BeaconJacksonObjectMapper beaconJacksonObjectMapper) throws Exception {
         beaconUdmConfig_ = beaconUdmConfig;
         objectMapper_ = beaconJacksonObjectMapper.getObjectMapper();
+        asyncHttpClient_ = asyncHttpClient(buildAsyncHttpClientConfig());
     }
 
     @Override
@@ -96,7 +100,7 @@ public final class BeaconUdmClient implements UdmClient {
         checkNotNull(username, "Username cannot be null.");
         checkNotNull(password, "Password cannot be null.");
 
-        try (AsyncHttpClient asyncHttpClient = asyncHttpClient(buildAsyncHttpClientConfig())) {
+        try {
             final UdmAuthLoginRequest udmAuthLoginRequest = new UdmAuthLoginRequest.Builder()
                     .setUsername(username)
                     .setPassword(password)
@@ -108,7 +112,7 @@ public final class BeaconUdmClient implements UdmClient {
             final String authLoginRequestBody =
                     objectMapper_.writeValueAsString(udmAuthLoginRequest);
 
-            final ListenableFuture<Response> futureResponse = asyncHttpClient.preparePost(authLoginApiUrl)
+            final ListenableFuture<Response> futureResponse = asyncHttpClient_.preparePost(authLoginApiUrl)
                     .setHeader(HttpHeaders.CONTENT_TYPE, JSON_UTF_8)
                     .setHeader(HttpHeaders.ACCEPT, JSON_UTF_8)
                     .setBody(authLoginRequestBody)
@@ -141,11 +145,11 @@ public final class BeaconUdmClient implements UdmClient {
             final String jwtAuthToken) {
         checkNotNull(jwtAuthToken, "JWT auth token cannot be null.");
 
-        try (AsyncHttpClient asyncHttpClient = asyncHttpClient(buildAsyncHttpClientConfig())) {
+        try {
             final String apiBaseUrl = beaconUdmConfig_.getApiBaseUrl();
             final String deviceStatApiUrl = String.format("%s%s", apiBaseUrl, API_PROXY_DEVICE_STAT_PATH);
 
-            final ListenableFuture<Response> futureResponse = asyncHttpClient.prepareGet(deviceStatApiUrl)
+            final ListenableFuture<Response> futureResponse = asyncHttpClient_.prepareGet(deviceStatApiUrl)
                     .setHeader(HttpHeaders.ACCEPT, JSON_UTF_8)
                     .addCookie(new DefaultCookie(AUTH_TOKEN_COOKIE_NAME, jwtAuthToken))
                     .execute();
@@ -241,7 +245,15 @@ public final class BeaconUdmClient implements UdmClient {
         return new DefaultAsyncHttpClientConfig.Builder()
                 .setUserAgent(userAgent)
                 .setSslEngineFactory(new JsseSslEngineFactory(context))
+                // The auth token cookie is set explicitly on each request; don't let the shared
+                // client carry cookies from one request (or job run) over to the next.
+                .setCookieStore(null)
                 .build();
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        asyncHttpClient_.close();
     }
 
 }
