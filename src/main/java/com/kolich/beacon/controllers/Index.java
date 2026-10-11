@@ -27,12 +27,13 @@
 package com.kolich.beacon.controllers;
 
 import com.kolich.beacon.components.BeaconConfig;
+import com.kolich.beacon.components.freemarker.BeaconFreeMarkerContent;
 import com.kolich.beacon.components.unifi.BeaconUdmConfig;
 import com.kolich.beacon.components.unifi.UdmClient;
-import com.kolich.beacon.entities.freemarker.FreeMarkerContent;
 import curacao.annotations.Controller;
 import curacao.annotations.Injectable;
 import curacao.annotations.RequestMapping;
+import curacao.freemarker.entities.FreeMarkerContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public final class Index {
                 beaconUdmConfig_.getPassword());
         final String udmUplinkIp = udmClient_.getUdmUplinkIp(jwtAuthToken);
 
-        return new FreeMarkerContent.Builder("templates/index.ftl")
+        return BeaconFreeMarkerContent.newHtmlBuilder("templates/index.ftl")
                 .withAttr(TEMPLATE_ATTR_IP, udmUplinkIp)
                 .build();
     }

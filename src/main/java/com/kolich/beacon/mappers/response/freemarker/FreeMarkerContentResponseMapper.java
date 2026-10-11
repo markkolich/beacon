@@ -27,27 +27,27 @@
 package com.kolich.beacon.mappers.response.freemarker;
 
 import com.kolich.beacon.components.BeaconConfig;
-import com.kolich.beacon.components.freemarker.FreeMarkerContentToString;
-import com.kolich.beacon.entities.freemarker.FreeMarkerContent;
-import com.kolich.beacon.mappers.response.AbstractFreeMarkerContentAwareResponseMapper;
+import com.kolich.beacon.components.freemarker.FreeMarkerContentRenderer;
 import curacao.annotations.Injectable;
 import curacao.annotations.Mapper;
 import curacao.core.servlet.AsyncContext;
 import curacao.core.servlet.HttpResponse;
+import curacao.freemarker.entities.FreeMarkerContent;
+import curacao.freemarker.mappers.AbstractFreeMarkerContentResponseMapper;
 
 import javax.annotation.Nonnull;
 
 @Mapper
 public final class FreeMarkerContentResponseMapper
-        extends AbstractFreeMarkerContentAwareResponseMapper<FreeMarkerContent> {
+        extends AbstractFreeMarkerContentResponseMapper<FreeMarkerContent> {
 
     private final BeaconConfig beaconConfig_;
 
     @Injectable
     public FreeMarkerContentResponseMapper(
-            final FreeMarkerContentToString fmContentToString,
+            final FreeMarkerContentRenderer fmcRenderer,
             final BeaconConfig beaconConfig) {
-        super(fmContentToString);
+        super(fmcRenderer);
         beaconConfig_ = beaconConfig;
     }
 

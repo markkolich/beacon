@@ -34,7 +34,7 @@ mvn versions:display-plugin-updates
 - **DI**: Curacao's `@Injectable` annotation for constructor injection; `@Controller` for request handlers
 - **Config**: Typesafe Config (HOCON) — base config in `src/main/resources/application.conf`, overridden at runtime via `-Dconfig.file`; boot package is `com.kolich.beacon`
 - **Scheduling**: Quartz scheduler runs `BeaconJob` on a cron schedule to poll UDM and update Route 53/NextDNS
-- **Templating**: FreeMarker templates in `src/main/webapp/templates/`
+- **Templating**: FreeMarker templates in `src/main/webapp/templates/`; rendered with `curacao-freemarker` (`FreeMarkerContentRenderer` extends `AbstractFreeMarkerContentRenderer`). Start every `FreeMarkerContent` from `BeaconFreeMarkerContent` (not curacao's `new FreeMarkerContent.Builder(...)`): `newHtmlBuilder(...)` and `newXmlBuilder(...)` add `HtmlMinifier` + `HtmlCompressor`; `newBuilder(template, mediaType[, status])` adds no transformers
 - **Entry point**: `com.kolich.beacon.Application` — configures Jetty server, context path `/beacon`
 
 ### Key Component Packages
