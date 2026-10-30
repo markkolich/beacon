@@ -32,7 +32,7 @@ import com.kolich.beacon.components.unifi.BeaconUdmConfig;
 import com.kolich.beacon.components.unifi.UdmClient;
 import curacao.annotations.Controller;
 import curacao.annotations.Injectable;
-import curacao.annotations.RequestMapping;
+import curacao.annotations.Route;
 import curacao.freemarker.entities.FreeMarkerContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +59,7 @@ public final class Index {
         udmClient_ = udmClient;
     }
 
-    @RequestMapping("^/$")
+    @Route("^/$")
     public FreeMarkerContent index() throws Exception {
         final String jwtAuthToken = udmClient_.getJwtAuthToken(
                 beaconUdmConfig_.getUsername(),

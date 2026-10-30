@@ -27,7 +27,7 @@
 package com.kolich.beacon.components.aws;
 
 import com.google.common.net.HttpHeaders;
-import com.kolich.beacon.BuildVersion;
+import com.kolich.buildversion.BuildVersion;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
 import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;

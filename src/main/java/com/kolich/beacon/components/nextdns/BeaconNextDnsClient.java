@@ -26,8 +26,8 @@
 
 package com.kolich.beacon.components.nextdns;
 
-import com.kolich.beacon.BuildVersion;
 import com.kolich.beacon.exceptions.BeaconException;
+import com.kolich.buildversion.BuildVersion;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
 import curacao.components.ComponentDestroyable;

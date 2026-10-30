@@ -26,37 +26,23 @@
 
 package com.kolich.beacon;
 
-import com.google.common.io.Resources;
-import curacao.servlet.jakarta.CuracaoJakartaContextListener;
-import curacao.servlet.jakarta.CuracaoJakartaDispatcherServlet;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
+import com.kolich.buildversion.BuildVersion;
+import curacao.jetty11.CuracaoJettyServer;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.resource.Resource;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
-
-import javax.annotation.Nullable;
-import java.net.URL;
-
-import static org.eclipse.jetty.servlet.ServletContextHandler.NO_SECURITY;
-import static org.eclipse.jetty.servlet.ServletContextHandler.NO_SESSIONS;
 
 public final class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
     private static final String CONTEXT_PATH = "/beacon";
-    private static final String CURACAO_SERVLET_MAPPING_UNDER_CONTEXT = "/*";
 
-    public static final String CONTEXT_ATTRIBUTE_BASE_RESOURCE = "beacon.base-resource";
+    private static final String THREAD_NAME_FORMAT = "jetty-beacon-%d";
+
+    private static final String ERROR_PAGE = "/forward-errors";
 
     @Option(names = {"--host"}, paramLabel = "HOST", description = "Server host.",
             defaultValue = "127.0.0.1")
@@ -79,80 +65,18 @@ public final class Application {
             final Application app = new Application();
             new CommandLine(app).parseArgs(args);
 
-            final Server server = app.buildServer();
+            final Server server = new CuracaoJettyServer.Builder(CONTEXT_PATH)
+                    .setThreadNameFormat(THREAD_NAME_FORMAT)
+                    .setHost(app.host_)
+                    .setPort(app.port_)
+                    .setErrorPage(ERROR_PAGE)
+                    .build();
+
             server.start();
             server.join();
         } catch (final Exception e) {
             LOG.error("Beacon startup failed.", e);
         }
-    }
-
-    private Server buildServer() throws Exception {
-        // Setup a new queued thread pool.
-        final QueuedThreadPool pool = new QueuedThreadPool();
-        // Use substring(1) to strip the leading "/" on the context name.
-        pool.setName("jetty-" + CONTEXT_PATH.substring(1));
-
-        // Instantiate a new server instance using said thread pool.
-        final Server server = new Server(pool);
-        final HttpConfiguration config = new HttpConfiguration();
-        config.setSendXPoweredBy(false); // Hide X-Powered-By: Jetty
-        config.setSendServerVersion(false); // Hide Server: Jetty-9.z
-
-        // Grab a NIO connector for the server.
-        final HttpConnectionFactory factory = new HttpConnectionFactory(config);
-        final ServerConnector connector = new ServerConnector(server, factory);
-        connector.setHost(host_);
-        connector.setPort(port_);
-        connector.setIdleTimeout(30000L); // 30-seconds
-        server.addConnector(connector);
-
-        // Setup a new Servlet context based on our parameters.
-        // See https://github.com/eclipse/jetty.project/issues/3963
-        final WebAppContext context = new WebAppContext(server, CONTEXT_PATH, null, null, null, null,
-                NO_SESSIONS | NO_SECURITY);
-        // No sessions, and no security handlers.
-        context.setSessionHandler(null);
-        context.setContextPath(CONTEXT_PATH);
-        // We do not use JSPs (Java Server Pages) so disable the defaults descriptor
-        // which disables loading the JSP engine and slightly improves startup time.
-        // http://jetty.4.x6.nabble.com/disable-jsp-engine-when-starting-jetty-td17393.html
-        context.setDefaultsDescriptor(null);
-
-        final Resource baseResource = getBaseResourceForRuntime();
-        context.setBaseResource(baseResource);
-        // Attach the base resource to the context so any components or controllers that need
-        // this at runtime can easily access it.
-        context.setAttribute(CONTEXT_ATTRIBUTE_BASE_RESOURCE, baseResource);
-
-        final ServletHolder curacaoHolder = new ServletHolder("curacao", CuracaoJakartaDispatcherServlet.class);
-        curacaoHolder.setAsyncSupported(true); // Async supported = true
-        context.addEventListener(new CuracaoJakartaContextListener()); // Required
-        context.addServlet(curacaoHolder, CURACAO_SERVLET_MAPPING_UNDER_CONTEXT);
-
-        final ErrorPageErrorHandler errorHandler = new ErrorPageErrorHandler();
-        errorHandler.addErrorPage(ErrorPageErrorHandler.GLOBAL_ERROR_PAGE, "/forward-errors");
-        context.setErrorHandler(errorHandler);
-
-        // Attach the context handler to the server, and go!
-        server.setHandler(context);
-        server.setStopAtShutdown(true);
-
-        return server;
-    }
-
-    @Nullable
-    private static Resource getBaseResourceForRuntime() throws Exception {
-        // In dev, the base resource will be something like "src/main/webapp".
-        final Resource srcMainWebApp = Resource.newResource("src/main/webapp");
-        if (srcMainWebApp.exists()) {
-            return srcMainWebApp;
-        }
-
-        // In prod/deployment, the app runs within a JAR and so the base resource
-        // will be a "webapp" directory within the fat JAR.
-        final URL webApp = Resources.getResource("webapp");
-        return Resource.newResource(webApp);
     }
 
 }

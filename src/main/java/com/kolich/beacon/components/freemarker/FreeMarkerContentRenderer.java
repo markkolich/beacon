@@ -27,8 +27,8 @@
 package com.kolich.beacon.components.freemarker;
 
 import com.google.common.collect.ImmutableMap;
-import com.kolich.beacon.BuildVersion;
 import com.kolich.beacon.components.BeaconConfig;
+import com.kolich.buildversion.BuildVersion;
 import curacao.annotations.Component;
 import curacao.annotations.Injectable;
 import curacao.freemarker.components.AbstractFreeMarkerContentRenderer;

@@ -35,7 +35,7 @@ mvn versions:display-plugin-updates
 - **Config**: Typesafe Config (HOCON) — base config in `src/main/resources/application.conf`, overridden at runtime via `-Dconfig.file`; boot package is `com.kolich.beacon`
 - **Scheduling**: Quartz scheduler runs `BeaconJob` on a cron schedule to poll UDM and update Route 53/NextDNS
 - **Templating**: FreeMarker templates in `src/main/webapp/templates/`; rendered with `curacao-freemarker` (`FreeMarkerContentRenderer` extends `AbstractFreeMarkerContentRenderer`). Start every `FreeMarkerContent` from `BeaconFreeMarkerContent` (not curacao's `new FreeMarkerContent.Builder(...)`): `newHtmlBuilder(...)` and `newXmlBuilder(...)` add `HtmlMinifier` + `HtmlCompressor`; `newBuilder(template, mediaType[, status])` adds no transformers
-- **Entry point**: `com.kolich.beacon.Application` — configures Jetty server, context path `/beacon`
+- **Entry point**: `com.kolich.beacon.Application` — builds the Jetty server with curacao-jetty11-server's `CuracaoJettyServer.Builder`, context path `/beacon`; components read the webapp base resource from the `CuracaoJettyServer.BASE_RESOURCE_CONTEXT_ATTRIBUTE` context attribute
 
 ### Key Component Packages
 
@@ -58,6 +58,6 @@ The build enforces strict Checkstyle and PMD rules that **fail the build** on vi
 - **4-space indentation**, 8-space line wrapping continuation; max line length 120
 - **No tabs**, no trailing whitespace, newline at end of file
 - **No consecutive blank lines** (except after package/import)
-- **All source files require the MIT license header** (see `build/checkstyle/LICENSE.txt`)
+- **All source files require the MIT license header** (enforced by Checkstyle with the rules in kolich-build-config, from kolich-parent)
 - **Banned imports**: `java.util.logging.*` (use SLF4J), `commons-lang` without `3`, `commons-collections` without `4`, `com.google.common.base.Charsets/Optional`
 - Tests run in `America/Los_Angeles` timezone
